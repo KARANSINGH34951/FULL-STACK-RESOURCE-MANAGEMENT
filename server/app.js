@@ -1,10 +1,20 @@
 import express from "express"
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+import connectDB from "./src/config/dbconnect.js";
+import cors from "cors";
+
+//routes
+import authRoutes from "./src/router/Auth.js";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  // allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 
 app.get("/",(req,res)=>{
@@ -14,7 +24,15 @@ app.get("/",(req,res)=>{
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/auth", authRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+connectDB()
+  .then(() => {
+    console.log("Database connected successfully");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection failed:", error.message);
+  });
