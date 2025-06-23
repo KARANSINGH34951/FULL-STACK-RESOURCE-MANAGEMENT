@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import AuthPage from './pages/AuthPage';
-
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -10,9 +8,9 @@ function App() {
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+       
       </Routes>
+      <Toaster position="top-right" reverseOrder={false} />
     </BrowserRouter>
   );
 }

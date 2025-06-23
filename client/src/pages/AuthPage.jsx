@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast"; 
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -24,20 +25,24 @@ const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isLogin ? "/api/user/login" : "/api/user/register";
+      const url = isLogin ? "http://localhost:5000/api/auth/signin" : "http://localhost:5000/api/auth/signup";
       const payload = isLogin
         ? { email: formData.email, password: formData.password }
         : formData;
 
       const res = await axios.post(url, payload);
-      alert(res.data.message || `${isLogin ? "Login" : "Signup"} successful!`);
+
+      toast.success(res.data.message || `${isLogin ? "Login" : "Signup"} successful!`);
+     
     } catch (err) {
-      alert(err.response?.data?.error || `${isLogin ? "Login" : "Signup"} failed`);
+      toast.error(err.response?.data?.error || `${isLogin ? "Login" : "Signup"} failed`);
     }
   };
 
   return (
     <div className="flex h-screen">
+      <Toaster position="top-right" reverseOrder={false} /> 
+
       {/* Image Panel */}
       <div
         className={`w-1/2 bg-cover bg-center transition-all duration-700 ${
@@ -137,4 +142,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;  
+export default AuthPage;
