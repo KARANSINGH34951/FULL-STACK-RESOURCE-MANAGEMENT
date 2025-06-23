@@ -2,6 +2,7 @@ import express from "express";
 import User from "../model/User.js";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export const signupController = async (req, res) => {
   const { username, email, role, password } = req.body;
@@ -137,5 +138,21 @@ export const logoutController = async (req, res) => {
       success: false,
       error: "An error occurred during logout",
     });
+  }
+};
+
+export const getUserController = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return res.status(200).json({
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role,
+    });
+  } catch (err) {
+    return res.status(403).json({ error: "Invalid token" });
   }
 };

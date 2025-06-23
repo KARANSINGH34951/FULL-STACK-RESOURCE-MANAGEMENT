@@ -1,61 +1,38 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthPage from './pages/AuthPage';
-import { Toaster } from "react-hot-toast";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
+import Login from "./pages/Login";
+import PlannerDashboard from "./pages/planner/PlannerDashboard";
+import StaffDashboard from "./pages/staff/StaffDashboard";
+import ClientDashboard from "./pages/client/ClientDashboard";
+import Unauthorized from "./pages/Unauthorized";
+import Signup from "./pages/Signup";
+import Home from './pages/Home';
 
-import PlannerDashboard from './pages/planner/PlannerDashboard';
-import StaffDashboard from './pages/staff/StaffDashboard';
-import ClientDashboard from './pages/client/ClientDashboard';
-
-import PrivateRoute from './components/PrivateRoute';
-import Unauthorized from './pages/Unauthorized';
-import NotFound from './pages/NotFound';
-
-function App() {
+const App = () => {
   return (
-    <BrowserRouter>
+    <div>
       <Routes>
-      
-        <Route path="/auth" element={<AuthPage />} />
+         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-       
-        <Route
-          path="/planner/dashboard"
-          element={
-            <PrivateRoute
-              element={PlannerDashboard}
-              allowedRoles={["PLANNER"]}
-            />
-          }
-        />
-        <Route
-          path="/staff/dashboard"
-          element={
-            <PrivateRoute
-              element={StaffDashboard}
-              allowedRoles={["STAFF"]}
-            />
-          }
-        />
-        <Route
-          path="/client/dashboard"
-          element={
-            <PrivateRoute
-              element={ClientDashboard}
-              allowedRoles={["CLIENT"]}
-            />
-          }
-        />
+        <Route element={<PrivateRoute allowedRoles={["PLANNER"]} />}>
+          <Route path="/planner-dashboard" element={<PlannerDashboard />} />
+        </Route>
 
-        {/* Unauthorized Route */}
+        <Route element={<PrivateRoute allowedRoles={["STAFF"]} />}>
+          <Route path="/staff-dashboard" element={<StaffDashboard />} />
+        </Route>
+
+        <Route element={<PrivateRoute allowedRoles={["CLIENT"]} />}>
+          <Route path="/client-dashboard" element={<ClientDashboard />} />
+        </Route>
+
         <Route path="/unauthorized" element={<Unauthorized />} />
-
-        {/* Catch-all 404 Not Found */}
-        <Route path="*" element={<NotFound />} />
       </Routes>
-
-      <Toaster position="top-right" reverseOrder={false} />
-    </BrowserRouter>
+    </div>
   );
-}
+};
 
 export default App;

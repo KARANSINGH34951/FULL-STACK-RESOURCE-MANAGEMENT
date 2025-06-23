@@ -1,49 +1,64 @@
-// src/pages/Login.jsx
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post("/api/user/login", formData);
-      alert(res.data.message || "Login successful!");
-      console.log(res.data); // can save user info/token here
+      await axios.post(
+        "http://localhost:5000/api/auth/login",
+        { email, password },
+        { withCredentials: true }
+      );
+
+      const res = await axios.get("http://localhost:5000/api/auth/user", {
+        withCredentials: true,
+      });
+      const { role } = res.data;
+
+      if (role === "PLANNER") navigate("/planner-dashboard");
+      else if (role === "STAFF") navigate("/staff-dashboard");
+      else if (role === "CLIENT") navigate("/client-dashboard");
+      else navigate("/unauthorized");
     } catch (err) {
-      alert(err.response?.data?.error || "Login failed");
+      const message =
+        err.response?.data?.error || "Login failed. Please try again.";
+      toast.error(message);
+      console.error("Login failed:", err);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-slate-100">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center">Login</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <Input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-            <Input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-            <Button type="submit" className="w-full">Login</Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+    <form onSubmit={handleLogin} className="p-8 max-w-md mx-auto space-y-4">
+      <Toaster position="top-right" reverseOrder={false} />
+      <h2 className="text-2xl font-semibold">Login</h2>
+      <input
+        type="email"
+        placeholder="Email"
+        className="border p-2 w-full"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        className="border p-2 w-full"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+        Login
+      </button>
+    </form>
   );
 };
 
