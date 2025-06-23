@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
-
+import { jwtDecode } from "jwt-decode";
 export const getToken = () => {
   return Cookies.get("token");
 };
@@ -10,7 +9,7 @@ export const getUserRole = () => {
   if (!token) return null;
 
   try {
-    const decoded = jwt_decode(token);
+    const decoded = jwtDecode(token);
     return decoded.role;
   } catch (err) {
     console.error("Invalid token");

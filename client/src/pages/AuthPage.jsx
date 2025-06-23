@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
@@ -28,40 +28,54 @@ const AuthPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  try {
+    const url = isLogin
+      ? "http://localhost:5000/api/auth/signin"
+      : "http://localhost:5000/api/auth/signup";
+    const payload = isLogin
+      ? { email: formData.email, password: formData.password }
+      : formData;
+
+    const res = await axios.post(url, payload);
+
+    if (res.data.token) {
+      Cookies.set("token", res.data.token, {
+        secure: process.env.NODE_ENV === "production", // Only secure in production
+        sameSite: "Strict",
+      });
+    }
+
+   
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    let role;
     try {
-      const url = isLogin
-        ? "http://localhost:5000/api/auth/signin"
-        : "http://localhost:5000/api/auth/signup";
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : formData;
+      role = res.data.role || jwtDecode(res.data.token).role;
+    } catch (err) {
+      console.error("Role extraction error:", err);
+      throw new Error("Failed to determine user role");
+    }
 
-      const res = await axios.post(url, payload);
+    // Show success message first
+    toast.success(
+      res.data.message || `${isLogin ? "Login" : "Signup"} successful!`
+    );
 
-      if (res.data.token) {
-        Cookies.set("token", res.data.token, {
-          secure: true,
-          sameSite: "Strict",
-        });
-      }
-
-      const role = res.data.role || jwt_decode(res.data.token).role;
-
+    // Then navigate after a brief delay
+    setTimeout(() => {
       if (role === "PLANNER") navigate("/planner/dashboard");
       else if (role === "STAFF") navigate("/staff/dashboard");
       else if (role === "CLIENT") navigate("/client/dashboard");
       else navigate("/unauthorized");
-
-      toast.success(
-        res.data.message || `${isLogin ? "Login" : "Signup"} successful!`
-      );
-    } catch (err) {
-      toast.error(
-        err.response?.data?.error || `${isLogin ? "Login" : "Signup"} failed`
-      );
-    }
-  };
+    }, 500);
+  } catch (err) {
+    console.error("Auth error:", err);
+    toast.error(
+      err.response?.data?.error || err.message || `${isLogin ? "Login" : "Signup"} failed`
+    );
+  }
+};
 
   return (
     <div className="flex h-screen">
