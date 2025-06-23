@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast"; 
+import toast, { Toaster } from "react-hot-toast";
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,8 +18,10 @@ const AuthPage = () => {
     role: "CLIENT",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
@@ -25,23 +30,42 @@ const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isLogin ? "http://localhost:5000/api/auth/signin" : "http://localhost:5000/api/auth/signup";
+      const url = isLogin
+        ? "http://localhost:5000/api/auth/signin"
+        : "http://localhost:5000/api/auth/signup";
       const payload = isLogin
         ? { email: formData.email, password: formData.password }
         : formData;
 
       const res = await axios.post(url, payload);
 
-      toast.success(res.data.message || `${isLogin ? "Login" : "Signup"} successful!`);
-     
+      if (res.data.token) {
+        Cookies.set("token", res.data.token, {
+          secure: true,
+          sameSite: "Strict",
+        });
+      }
+
+      const role = res.data.role || jwt_decode(res.data.token).role;
+
+      if (role === "PLANNER") navigate("/planner/dashboard");
+      else if (role === "STAFF") navigate("/staff/dashboard");
+      else if (role === "CLIENT") navigate("/client/dashboard");
+      else navigate("/unauthorized");
+
+      toast.success(
+        res.data.message || `${isLogin ? "Login" : "Signup"} successful!`
+      );
     } catch (err) {
-      toast.error(err.response?.data?.error || `${isLogin ? "Login" : "Signup"} failed`);
+      toast.error(
+        err.response?.data?.error || `${isLogin ? "Login" : "Signup"} failed`
+      );
     }
   };
 
   return (
     <div className="flex h-screen">
-      <Toaster position="top-right" reverseOrder={false} /> 
+      <Toaster position="top-right" reverseOrder={false} />
 
       {/* Image Panel */}
       <div

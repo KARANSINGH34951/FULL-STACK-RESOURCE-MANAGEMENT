@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv";
 import connectDB from "./src/config/dbconnect.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 //routes
 import authRoutes from "./src/router/Auth.js";
@@ -16,13 +17,13 @@ app.use(cors({
   // allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-
 app.get("/",(req,res)=>{
   res.send("testing")
 })
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 app.use("/api/auth", authRoutes);
 

@@ -7,8 +7,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
-
-       
       </Routes>
       <Toaster position="top-right" reverseOrder={false} />
     </BrowserRouter>
