@@ -6,13 +6,14 @@ import cookieParser from "cookie-parser";
 
 //routes
 import authRoutes from "./src/router/Auth.js";
+import plannerRoutes from "./src/router/planner.js";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: "http://localhost:5173", // your frontend
+  origin: process.env.CORS_ORIGIN, 
   credentials: true 
 }));
 
@@ -25,6 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/planner", plannerRoutes);
+
 
 connectDB()
   .then(() => {
