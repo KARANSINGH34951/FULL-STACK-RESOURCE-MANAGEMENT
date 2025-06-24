@@ -132,7 +132,6 @@ export const addResource = async (req, res) => {
   try {
     const { name, type, quantity, availability, description } = req.body;
 
-    // Validation
     if (!name || !type || quantity == null) {
       return res.status(400).json({ error: "Name, type, and quantity are required." });
     }

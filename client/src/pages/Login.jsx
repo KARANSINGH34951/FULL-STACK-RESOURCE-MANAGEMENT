@@ -22,6 +22,8 @@ const Login = () => {
         withCredentials: true,
       });
       const { role } = res.data;
+      console.log("role odf tnhis use : "+ role);
+      
 
       if (role === "PLANNER") navigate("/planner-dashboard");
       else if (role === "STAFF") navigate("/staff-dashboard");

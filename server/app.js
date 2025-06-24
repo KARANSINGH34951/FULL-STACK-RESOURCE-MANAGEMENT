@@ -28,7 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/planner", plannerRoutes);
 
-
 connectDB()
   .then(() => {
     console.log("Database connected successfully");

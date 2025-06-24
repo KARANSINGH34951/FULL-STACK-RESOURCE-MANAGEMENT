@@ -23,7 +23,7 @@ const Home = () => {
         ></div>
 
         {/* Navbar */}
-        <nav className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-black bg-opacity-60">
+        {/* <nav className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-black bg-opacity-60">
           <div className="text-2xl font-bold text-[#8980F5]">EventX</div>
           <div className="space-x-4">
             <button
@@ -39,7 +39,7 @@ const Home = () => {
               Signup
             </button>
           </div>
-        </nav>
+        </nav> */}
 
         {/* Hero Content */}
         <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-4">

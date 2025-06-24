@@ -8,10 +8,12 @@ import ClientDashboard from "./pages/client/ClientDashboard";
 import Unauthorized from "./pages/Unauthorized";
 import Signup from "./pages/Signup";
 import Home from './pages/Home';
+import Navbar from './components/Navbar';
 
 const App = () => {
   return (
     <div>
+      <Navbar/>
       <Routes>
          <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
