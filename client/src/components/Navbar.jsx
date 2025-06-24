@@ -5,7 +5,7 @@ import axios from "axios";
 const Navbar = () => {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
-  const location = useLocation(); 
+  const location = useLocation();
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -32,32 +32,56 @@ const Navbar = () => {
       <ul className="flex gap-4">
         {!role && (
           <>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/signup">Signup</Link></li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            <li>
+              <Link to="/signup">Signup</Link>
+            </li>
           </>
         )}
 
         {role === "PLANNER" && (
           <>
-            <li><Link to="/planner-dashboard">Dashboard</Link></li>
-            <li><Link to="/planner-dashboard#add-event">Add Event</Link></li>
-            <li><Link to="/planner-dashboard#add-resource">Add Resource</Link></li>
-            <li><Link to="/planner-dashboard#allocate-resource">Allocate Resource</Link></li>
+            <li>
+              <Link to="/planner-dashboard">Dashboard</Link>
+            </li>
+            <li>
+              <Link to="/planner-dashboard/add-event">Add Event</Link>
+            </li>
+            <li>
+              <Link to="/planner-dashboard/add-resource">Add Resource</Link>
+            </li>
+            <li>
+              <Link to="/planner-dashboard/allocate-resource">
+                Allocate Resource
+              </Link>
+            </li>
           </>
         )}
 
         {role === "STAFF" && (
           <>
-            <li><Link to="/staff-dashboard">Dashboard</Link></li>
-            <li><Link to="/staff-dashboard#edit-event">Edit Events</Link></li>
+            <li>
+              <Link to="/staff-dashboard">Dashboard</Link>
+            </li>
+            <li>
+              <Link to="/staff-dashboard/edit-event">Edit Events</Link>
+            </li>
           </>
         )}
 
         {role === "CLIENT" && (
           <>
-            <li><Link to="/client-dashboard">Dashboard</Link></li>
-            <li><Link to="/client-dashboard#bookings">My Bookings</Link></li>
+            <li>
+              <Link to="/client-dashboard">Dashboard</Link>
+            </li>
+            <li>
+              <Link to="/client-dashboard/view">My Bookings</Link>
+            </li>
           </>
         )}
 
@@ -66,7 +90,9 @@ const Navbar = () => {
             <button
               onClick={async () => {
                 try {
-                  await axios.get("http://localhost:5000/api/auth/logout", { withCredentials: true });
+                  await axios.get("http://localhost:5000/api/auth/logout", {
+                    withCredentials: true,
+                  });
                   localStorage.clear();
                   window.location.href = "/login";
                 } catch (err) {
