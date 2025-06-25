@@ -86,6 +86,8 @@ export const loginController = async (req, res) => {
       });
     }
 
+    // console.log(user._id);
+
     const token = jsonwebtoken.sign(
       {
         id: user._id,

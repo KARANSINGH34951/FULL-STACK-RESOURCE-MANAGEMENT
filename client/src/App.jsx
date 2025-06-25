@@ -18,6 +18,10 @@ import PlannerHome from "./pages/planner/plannerHome";
 import StaffHome from "./pages/staff/staffHome";
 import EditEvent from "./pages/staff/EditEvent";
 import ClientHome from "./pages/client/ClientHome";
+import EventRequestForm from "./pages/client/EventRequestForm";
+import MyEventRequests  from  "./pages/client/MyEventRequests"
+import PlannerPendingEvents from "./pages/planner/PlannerPendingEvents";
+import PlannerAssignResources from "./pages/planner/PlannerAssignResources";
 
 const App = () => {
   return (
@@ -34,6 +38,8 @@ const App = () => {
             <Route path="add-event" element={<CreateEvent />} />
             <Route path="add-resource" element={<AddResource />} />
             <Route path="allocate-resource" element={<AllocateResource />} />
+             <Route path="pending-events" element={<PlannerPendingEvents />} />
+             <Route path="approved-events" element={<PlannerAssignResources />} />
           </Route>
         </Route>
 
@@ -41,13 +47,18 @@ const App = () => {
           <Route path="/staff-dashboard" element={<StaffDashboard />}>
             <Route index element={<StaffHome />} />
             <Route path="edit-event" element={<EditEvent />} />
+           
           </Route>
         </Route>
 
         <Route element={<PrivateRoute allowedRoles={["CLIENT"]} />}>
           <Route path="/client-dashboard" element={<ClientDashboard />}>
             <Route path="view" element={<ClientHome />} />
+            <Route path="request" element={<EventRequestForm />} />
+            <Route path="my-events" element={<MyEventRequests />} />
+            
           </Route>
+
         </Route>
 
         <Route path="/unauthorized" element={<Unauthorized />} />

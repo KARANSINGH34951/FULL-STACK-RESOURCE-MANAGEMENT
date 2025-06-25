@@ -22,7 +22,7 @@ const AddResource = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:5000/api/planner/resource', formData, {
+      const res = await axios.post('http://localhost:5000/api/planner/add-resource', formData, {
         withCredentials: true, // in case your backend needs cookies
         headers: {
           'Content-Type': 'application/json'

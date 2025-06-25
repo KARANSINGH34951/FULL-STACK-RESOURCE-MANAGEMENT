@@ -19,7 +19,7 @@ const plannerSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'],
+    enum: ['Pending', 'Approved', 'In Progress','PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'],
     default: 'PLANNED',
   },
   isPublic: {

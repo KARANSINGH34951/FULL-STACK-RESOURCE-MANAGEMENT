@@ -7,7 +7,8 @@ import cookieParser from "cookie-parser";
 //routes
 import authRoutes from "./src/router/Auth.js";
 import plannerRoutes from "./src/router/planner.js";
-
+import clientRoutes from "./src/router/client.js";
+import staffRoutes from "./src/router/staff.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,7 +18,7 @@ app.use(cors({
   credentials: true 
 }));
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
   res.send("testing")
 })
 app.use(cookieParser());
@@ -27,6 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/planner", plannerRoutes);
+app.use("/api/client", clientRoutes);
+app.use("/api/staff",staffRoutes );
 
 connectDB()
   .then(() => {

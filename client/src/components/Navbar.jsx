@@ -60,6 +60,14 @@ const Navbar = () => {
                 Allocate Resource
               </Link>
             </li>
+            <li>
+              <Link to="/planner-dashboard/pending-events">
+                Pending Events
+              </Link>
+            </li>
+             <Link to="/planner-dashboard/approved-events" className="hover:underline text-green-400 font-semibold">
+          approved-events
+        </Link>
           </>
         )}
 
@@ -80,8 +88,14 @@ const Navbar = () => {
               <Link to="/client-dashboard">Dashboard</Link>
             </li>
             <li>
-              <Link to="/client-dashboard/view">My Bookings</Link>
+              <Link to="/client-dashboard/request">Request Event</Link>
             </li>
+            <Link
+              to="/client-dashboard/my-events"
+              className="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              View My Events
+            </Link>
           </>
         )}
 

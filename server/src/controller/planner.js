@@ -1,7 +1,8 @@
-import Event from "../model/planner.js";
+import Event from "../model/Event.js";
 import Resource from '../model/resource.js';
 import User from "../model/User.js";
 import sendEmail from "../utils/sendEmail.js";
+import Allocation from '../model/Allocation.js';
 
 export const createEvent = async (req, res) => {
   try {
@@ -149,5 +150,164 @@ export const addResource = async (req, res) => {
   } catch (error) {
     console.error("Error adding resource:", error.message);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const allocateResource = async (req, res) => {
+  try {
+    const { eventId, resourceId, quantity } = req.body;
+
+    const resource = await Resource.findById(resourceId);
+    if (!resource) return res.status(404).json({ message: "Resource not found" });
+
+    if (!resource.availability || resource.quantity < quantity) {
+      return res.status(400).json({ message: "Insufficient resource quantity" });
+    }
+
+    const allocation = new Allocation({
+      event: eventId,
+      resource: resourceId,
+      quantity,
+    });
+
+    await allocation.save();
+
+    // Optional: Decrease available quantity
+    resource.quantity -= quantity;
+    await resource.save();
+
+    res.status(201).json({ message: "Resource allocated successfully", allocation });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to allocate resource" });
+  }
+};
+
+export const getPendingEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ status: 'Pending' }).populate('clientId', 'email');
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error fetching pending events:', error);
+    res.status(500).json({ message: 'Failed to fetch events' });
+  }
+};
+
+export const updateEventStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['Approved', 'Rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: `Event ${status.toLowerCase()} successfully`,
+      event: updatedEvent
+    });
+  } catch (error) {
+    console.error('Error updating event status:', error);
+    res.status(500).json({ message: 'Failed to update status' });
+  }
+};
+
+export const assignResources = async (req, res) => {
+  try {
+    const { id } = req.params; // event ID
+    const { resources } = req.body; // [{ resource: resourceId, quantity: number }]
+    
+    console.log('Incoming assign request');
+    console.log('Params:', req.params);
+    console.log('Body:', req.body);
+
+    if (!Array.isArray(resources)) {
+      return res.status(400).json({ message: 'resources must be an array of { resource, quantity }' });
+    }
+
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    if (event.status !== 'Approved') {
+      return res.status(400).json({ message: 'Only approved events can be assigned resources' });
+    }
+
+    // Step 1: Save only resource IDs to the event
+    event.resourcesAllocated = resources.map(r => r.resource);
+    const updatedEvent = await event.save();
+
+    // Step 2: Save detailed allocations and reduce available quantities
+    for (const r of resources) {
+      const resourceDoc = await Resource.findById(r.resource);
+      if (!resourceDoc) continue;
+
+      if (resourceDoc.quantity < r.quantity) {
+        return res.status(400).json({ message: `Insufficient quantity for resource: ${resourceDoc.name}` });
+      }
+
+      // Create Allocation record
+      await Allocation.create({
+        event: id,
+        resource: r.resource,
+        quantity: r.quantity
+      });
+
+      // Decrease quantity
+      resourceDoc.quantity -= r.quantity;
+
+      // Optional: mark as unavailable if quantity is zero
+      if (resourceDoc.quantity === 0) {
+        resourceDoc.availability = false;
+      }
+
+      await resourceDoc.save();
+    }
+
+    res.status(200).json({
+      message: 'Resources assigned successfully',
+      event: updatedEvent
+    });
+
+  } catch (error) {
+    console.error('Error assigning resources:', error);
+    res.status(500).json({ message: 'Failed to assign resources' });
+  }
+};
+
+
+export const getApprovedEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ status: 'Approved' }).populate('clientId', 'email');
+    res.status(200).json(events);
+  } catch (error) {
+    console.error('Error fetching approved events:', error);
+    res.status(500).json({ message: 'Failed to fetch approved events' });
+  }
+};
+
+// controller/planner.js
+export const assignStaffToEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { staffId } = req.body;
+
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: 'Event not found' });
+
+    event.staffAssigned = staffId;
+    await event.save();
+
+    res.status(200).json({ message: 'Staff assigned successfully', event });
+  } catch (error) {
+    console.error('Error assigning staff:', error);
+    res.status(500).json({ message: 'Failed to assign staff' });
   }
 };
