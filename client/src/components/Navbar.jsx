@@ -55,11 +55,11 @@ const Navbar = () => {
             <li>
               <Link to="/planner-dashboard/add-resource">Add Resource</Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/planner-dashboard/allocate-resource">
                 Allocate Resource
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/planner-dashboard/pending-events">
                 Pending Events

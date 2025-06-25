@@ -1,51 +1,30 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const eventSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  description: {
-    type: String
-  },
-  date: {
-    type: Date,
-    required: true
-  },
-  location: {
-    type: String,
-    required: true
-  },
+  title: { type: String, required: true, trim: true },
+  description: { type: String },
+  date: { type: Date, required: true },
+  location: { type: String, required: true },
   clientId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: false, // clientId optional for planner-created events
   },
   status: {
     type: String,
-    enum: ['Pending', 'Approved', 'In Progress', 'Completed', 'Cancelled'],
-    default: 'Pending'
+    enum: ["Pending", "Approved", "In Progress", "Completed", "Cancelled"],
+    default: "Pending",
   },
-  requirements: {
-    type: String 
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
+  requirements: { type: String },
+  createdAt: { type: Date, default: Date.now },
   resourcesAllocated: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Resource'
-    }
-  ],staffAssigned: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'User'
-}
-
+    { type: mongoose.Schema.Types.ObjectId, ref: "Resource" },
+  ],
+  staffAssigned: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  isPublic: { type: Boolean, default: false },
+  maxGuests: { type: Number },
+  type: { type: String },
 });
 
-const Event = mongoose.model('Event', eventSchema);
-
+const Event = mongoose.model("Event", eventSchema);
 export default Event;

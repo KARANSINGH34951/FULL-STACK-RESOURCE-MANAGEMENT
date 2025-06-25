@@ -37,7 +37,7 @@ const App = () => {
             <Route index element={<PlannerHome />} />
             <Route path="add-event" element={<CreateEvent />} />
             <Route path="add-resource" element={<AddResource />} />
-            <Route path="allocate-resource" element={<AllocateResource />} />
+           
              <Route path="pending-events" element={<PlannerPendingEvents />} />
              <Route path="approved-events" element={<PlannerAssignResources />} />
           </Route>

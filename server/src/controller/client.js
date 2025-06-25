@@ -2,15 +2,9 @@ import Event from '../model/Event.js';
 
 export const createEvent = async (req, res) => {
   try {
-    const { title, description, date, location, requirements } = req.body;
-    console.log(req.body);
-    
+    const { title, description, date, location, requirements, maxGuests, type } = req.body;
 
-    // Get client ID from the decoded JWT user object
     const clientId = req.user.id;
-    console.log(clientId);
-    
-    const role = req.user.role;
 
     const event = new Event({
       title,
@@ -19,6 +13,8 @@ export const createEvent = async (req, res) => {
       location,
       requirements,
       clientId,
+      maxGuests,
+      type,
     });
 
     const savedEvent = await event.save();

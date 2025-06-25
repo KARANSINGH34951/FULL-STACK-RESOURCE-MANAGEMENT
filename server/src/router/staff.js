@@ -5,7 +5,7 @@ import { authenticateToken, authorizeRoles } from '../middleware/auth.js';
 const router=express.Router();
 
 router.get('/my-events', authenticateToken, authorizeRoles('STAFF'), getMyAllocatedEvents);
-router.get('/staff', authenticateToken, authorizeRoles('PLANNER'), getAllStaff);
+router.get('/getstaff', authenticateToken, authorizeRoles('PLANNER'), getAllStaff);
 
 
 export default router;

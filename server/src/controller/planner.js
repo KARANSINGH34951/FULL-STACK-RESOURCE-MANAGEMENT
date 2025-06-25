@@ -4,6 +4,7 @@ import User from "../model/User.js";
 import sendEmail from "../utils/sendEmail.js";
 import Allocation from '../model/Allocation.js';
 
+
 export const createEvent = async (req, res) => {
   try {
     const {
@@ -18,13 +19,13 @@ export const createEvent = async (req, res) => {
     } = req.body;
 
     if (!title || !description || !dateTime || !location || !status || !type) {
-      return res.status(400).json({ error: "Please fill all required fields" });
+      return res.status(400).json({ error: 'Please fill all required fields' });
     }
 
     const newEvent = new Event({
       title,
       description,
-      dateTime,
+      date: new Date(dateTime), // ensure proper conversion
       location,
       status,
       isPublic,
@@ -34,35 +35,24 @@ export const createEvent = async (req, res) => {
 
     const savedEvent = await newEvent.save();
 
-    // Find all clients
-    const clients = await User.find({ role: "CLIENT" });
-    const emails = clients.map((client) => client.email);
+    // Send email to all clients (optional)
+    const clients = await User.find({ role: 'CLIENT' });
+    const emails = clients.map(client => client.email);
 
-    const subject = "📢 New Event Scheduled!";
-    const text = `
-Hello!
-
-A new event has been scheduled:
-
-📌 Title: ${title}
-🗓 Date & Time: ${new Date(dateTime).toLocaleString()}
-📍 Location: ${location}
-
-Stay tuned for more updates!
-
-- Event Management Team
-`;
+    const subject = '📢 New Event Scheduled!';
+    const text = `Hello!\n\nA new event has been scheduled:\n\n📌 Title: ${title}\n🗓 Date & Time: ${new Date(dateTime).toLocaleString()}\n📍 Location: ${location}\n\nStay tuned!`;
 
     if (emails.length > 0) {
-      await sendEmail(emails.join(","), subject, text);
+      await sendEmail(emails.join(','), subject, text);
     }
 
     return res.status(201).json(savedEvent);
   } catch (error) {
-    console.error("Error creating event:", error.message);
-    return res.status(500).json({ error: "Failed to create event" });
+    console.error('Error creating event:', error);
+    return res.status(500).json({ error: 'Failed to create event' });
   }
 };
+
 
 export const getEvents = async (req, res) => {
   try {
@@ -293,7 +283,6 @@ export const getApprovedEvents = async (req, res) => {
   }
 };
 
-// controller/planner.js
 export const assignStaffToEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -302,12 +291,17 @@ export const assignStaffToEvent = async (req, res) => {
     const event = await Event.findById(eventId);
     if (!event) return res.status(404).json({ message: 'Event not found' });
 
-    event.staffAssigned = staffId;
+    // Check if already assigned
+    if (event.assignedStaff) {
+      return res.status(400).json({ message: 'Staff already assigned to this event' });
+    }
+
+    event.assignedStaff = staffId;
     await event.save();
 
     res.status(200).json({ message: 'Staff assigned successfully', event });
-  } catch (error) {
-    console.error('Error assigning staff:', error);
+  } catch (err) {
+    console.error('Error assigning staff:', err);
     res.status(500).json({ message: 'Failed to assign staff' });
   }
 };

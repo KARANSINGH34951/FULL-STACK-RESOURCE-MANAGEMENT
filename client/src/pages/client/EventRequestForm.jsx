@@ -8,14 +8,17 @@ const EventRequestForm = () => {
     date: '',
     location: '',
     requirements: '',
+    maxGuests: '',
+    type: 'MEETING'
   });
 
   const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
-    setFormData({ 
-      ...formData, 
-      [e.target.name]: e.target.value 
+    const { name, value, type: inputType } = e.target;
+    setFormData({
+      ...formData,
+      [name]: inputType === 'number' ? parseInt(value) : value
     });
   };
 
@@ -26,21 +29,23 @@ const EventRequestForm = () => {
       const res = await axios.post(
         'http://localhost:5000/api/client/request',
         formData,
-        { withCredentials: true } 
+        { withCredentials: true }
       );
 
       console.log('Event request response:', res.data);
-      
-      setMessage('Event request submitted successfully!');
+
+      setMessage('✅ Event request submitted successfully!');
       setFormData({
         title: '',
         description: '',
         date: '',
         location: '',
         requirements: '',
+        maxGuests: '',
+        type: 'MEETING'
       });
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Error submitting request');
+      setMessage(error.response?.data?.message || '❌ Error submitting request');
     }
   };
 
@@ -91,6 +96,30 @@ const EventRequestForm = () => {
           placeholder="Special Requirements"
           className="w-full border p-2 rounded"
         />
+
+        {/* New Fields */}
+        <input
+          type="number"
+          name="maxGuests"
+          value={formData.maxGuests}
+          onChange={handleChange}
+          placeholder="Maximum Number of Guests"
+          className="w-full border p-2 rounded"
+        />
+
+        <select
+          name="type"
+          value={formData.type}
+          onChange={handleChange}
+          className="w-full border p-2 rounded"
+        >
+          <option value="MEETING">Meeting</option>
+          <option value="CONFERENCE">Conference</option>
+          <option value="WORKSHOP">Workshop</option>
+          <option value="WEBINAR">Webinar</option>
+          <option value="OTHER">Other</option>
+        </select>
+
         <button
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
