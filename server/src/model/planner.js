@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const plannerSchema = new mongoose.Schema({
-  title:{
+  title: {
     type: String,
     required: true,
   },
@@ -19,8 +19,16 @@ const plannerSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Approved', 'In Progress','PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'],
-    default: 'PLANNED',
+    enum: [
+      "Pending",
+      "Approved",
+      "In Progress",
+      "PLANNED",
+      "ONGOING",
+      "COMPLETED",
+      "CANCELLED",
+    ],
+    default: "PLANNED",
   },
   isPublic: {
     type: Boolean,
@@ -32,10 +40,15 @@ const plannerSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['MEETING', 'CONFERENCE', 'WORKSHOP', 'WEBINAR', 'OTHER'],
-    default: 'MEETING',
+    enum: ["MEETING", "CONFERENCE", "WORKSHOP", "WEBINAR", "OTHER"],
+    default: "MEETING",
   },
-})
+  assignedStaff: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+});
 
-const Planner = mongoose.model('Planner', plannerSchema);
+const Planner = mongoose.model("Planner", plannerSchema);
 export default Planner;

@@ -4,7 +4,6 @@ import User from "../model/User.js";
 import sendEmail from "../utils/sendEmail.js";
 import Allocation from '../model/Allocation.js';
 
-
 export const createEvent = async (req, res) => {
   try {
     const {
@@ -52,7 +51,6 @@ export const createEvent = async (req, res) => {
     return res.status(500).json({ error: 'Failed to create event' });
   }
 };
-
 
 export const getEvents = async (req, res) => {
   try {
@@ -211,11 +209,7 @@ export const updateEventStatus = async (req, res) => {
 export const assignResources = async (req, res) => {
   try {
     const { id } = req.params; // event ID
-    const { resources } = req.body; // [{ resource: resourceId, quantity: number }]
-    
-    console.log('Incoming assign request');
-    console.log('Params:', req.params);
-    console.log('Body:', req.body);
+    const { resources } = req.body; 
 
     if (!Array.isArray(resources)) {
       return res.status(400).json({ message: 'resources must be an array of { resource, quantity }' });
@@ -291,12 +285,12 @@ export const assignStaffToEvent = async (req, res) => {
     const event = await Event.findById(eventId);
     if (!event) return res.status(404).json({ message: 'Event not found' });
 
-    // Check if already assigned
-    if (event.assignedStaff) {
+    // ✅ Use correct field name from schema
+    if (event.staffAssigned) {
       return res.status(400).json({ message: 'Staff already assigned to this event' });
     }
 
-    event.assignedStaff = staffId;
+    event.staffAssigned = staffId;
     await event.save();
 
     res.status(200).json({ message: 'Staff assigned successfully', event });
@@ -305,6 +299,7 @@ export const assignStaffToEvent = async (req, res) => {
     res.status(500).json({ message: 'Failed to assign staff' });
   }
 };
+
 
 export const getPlannerStats = async (req, res) => {
   try {

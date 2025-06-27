@@ -47,7 +47,6 @@ router.put(
   assignResources
 );
 
-
 router.get(
   '/all',
   authenticateToken,
@@ -61,8 +60,6 @@ router.get(
   authorizeRoles('PLANNER'),
   getApprovedEvents
 );
-
-
 
 router.put('/event/:eventId/assign-staff', authenticateToken, authorizeRoles('PLANNER'), assignStaffToEvent);
 

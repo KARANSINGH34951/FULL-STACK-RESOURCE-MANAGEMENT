@@ -14,21 +14,28 @@ const ClientHome = () => {
         const res = await axios.get('http://localhost:5000/api/client/my-events', {
           withCredentials: true,
         });
-
         setEvents(res.data);
         setEventDates(res.data.map(ev => new Date(ev.date).toDateString()));
       } catch (err) {
         console.error('Error fetching events:', err);
       }
     };
-
     fetchEvents();
   }, []);
 
   const tileClassName = ({ date }) => {
-    if (eventDates.includes(date.toDateString())) {
+    const today = new Date().toDateString();
+    const isToday = date.toDateString() === today;
+    const isEventDate = eventDates.includes(date.toDateString());
+
+    if (isEventDate && isToday) {
+      return 'bg-yellow-500 text-white font-bold rounded-full';
+    } else if (isEventDate) {
       return 'bg-blue-500 text-white font-bold rounded-full';
+    } else if (isToday) {
+      return 'border border-gray-400 rounded-full';
     }
+
     return null;
   };
 
@@ -39,23 +46,24 @@ const ClientHome = () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
-      <div className="bg-white shadow-md rounded-xl p-6 flex flex-col md:flex-row items-center justify-between mb-8">
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-gray-800">Welcome, Client 👋</h2>
-          <p className="text-gray-600">Track and manage your events on the calendar.</p>
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl p-6 flex flex-col md:flex-row items-center justify-between mb-8 relative overflow-hidden shadow-md">
+        <div className="space-y-2 z-10">
+          <h2 className="text-3xl font-bold">Welcome, Client 👋</h2>
+          <p className="text-gray-100">Track and manage your upcoming events below.</p>
         </div>
         <img
           src="https://cdn-icons-png.flaticon.com/512/3771/3771521.png"
           alt="Client dashboard"
-          className="w-32 h-32 object-contain mt-4 md:mt-0"
+          className="w-32 h-32 object-contain mt-4 md:mt-0 z-10"
         />
+        <div className="absolute right-0 bottom-0 opacity-20 w-64 h-64 bg-white rounded-full transform translate-x-1/4 translate-y-1/4 blur-3xl"></div>
       </div>
 
       {/* Calendar + Events */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Calendar */}
-        <div className="bg-white shadow rounded-xl p-4">
-          <h3 className="text-lg font-semibold mb-4">📅 Event Calendar</h3>
+        <div className="bg-white shadow rounded-xl p-6">
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">📅 Event Calendar</h3>
           <Calendar
             onChange={setDate}
             value={date}
@@ -65,8 +73,8 @@ const ClientHome = () => {
         </div>
 
         {/* Events Display */}
-        <div className="bg-white shadow rounded-xl p-4 overflow-auto">
-          <h3 className="text-lg font-semibold mb-4">
+        <div className="bg-white shadow rounded-xl p-6 overflow-auto">
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">
             🗂 {selectedEvents.length > 0
               ? `Events on ${date.toDateString()}`
               : 'All Your Events'}
@@ -75,23 +83,30 @@ const ClientHome = () => {
           {(selectedEvents.length > 0 ? selectedEvents : events).map((event) => (
             <div
               key={event._id}
-              className="border p-3 rounded-lg mb-3 bg-blue-50"
+              className="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-lg mb-4 shadow-sm transition hover:shadow-md"
             >
-              <h4 className="font-semibold text-blue-700">{event.title}</h4>
-              <p className="text-sm text-gray-700">
-                📅 {new Date(event.date).toDateString()}
-              </p>
-              <p className="text-sm text-gray-700">📍 {event.location}</p>
-              <p className="text-sm text-gray-700">👥 Guests: {event.maxGuests || '—'}</p>
-              <p className="text-sm text-gray-700">🎯 Type: {event.type || '—'}</p>
-              <p className="text-sm text-gray-700">
-                🏷️ Status: <span className="font-medium">{event.status}</span>
+              <h4 className="text-lg font-bold text-blue-700 flex items-center gap-2">
+                📌 {event.title}
+              </h4>
+              <p className="text-sm text-gray-600">📅 {new Date(event.date).toDateString()}</p>
+              <p className="text-sm text-gray-600">📍 {event.location}</p>
+              <p className="text-sm text-gray-600">👥 Guests: {event.maxGuests || '—'}</p>
+              <p className="text-sm text-gray-600">🎯 Type: {event.type || '—'}</p>
+              <p className="text-sm text-gray-600">
+                🏷️ Status: <span className="font-semibold">{event.status}</span>
               </p>
             </div>
           ))}
 
-          {(events.length === 0 || selectedEvents.length === 0) && (
-            <p className="text-gray-500">No events to display.</p>
+          {(events.length === 0 || (selectedEvents.length === 0 && date)) && (
+            <div className="text-center py-8 text-gray-500">
+              <p>No events to display.</p>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/7486/7486785.png"
+                alt="No events"
+                className="w-24 mx-auto mt-4 opacity-60"
+              />
+            </div>
           )}
         </div>
       </div>
