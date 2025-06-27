@@ -1,139 +1,90 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaTags, FaInfoCircle } from 'react-icons/fa';
 
 const MyEventRequests = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    date: "",
-    location: "",
-    requirements: "",
-    maxGuests: "",
-    type: "MEETING",
-  });
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/client/my-events', {
+          withCredentials: true
+        });
+        setEvents(res.data);
+      } catch (err) {
+        console.error('Error fetching events:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const statusStyles = {
+    Pending: 'bg-yellow-100 text-yellow-800',
+    Approved: 'bg-green-100 text-green-800',
+    Rejected: 'bg-red-100 text-red-800',
+    Completed: 'bg-blue-100 text-blue-800'
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(
-        "http://localhost:5000/api/client/create-event",
-        formData,
-        {
-          withCredentials: true,
-        }
-      );
-
-      alert("Event request submitted successfully!");
-      setFormData({
-        title: "",
-        description: "",
-        date: "",
-        location: "",
-        requirements: "",
-        maxGuests: "",
-        type: "MEETING",
-      });
-    } catch (err) {
-      console.error("Error submitting event:", err);
-      alert("Failed to submit event request.");
-    }
-  };
+  if (loading) {
+    return <p className="text-center text-gray-500 text-lg mt-6">Loading your event requests...</p>;
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-lg mx-auto bg-white p-6 rounded shadow"
-    >
-      <h2 className="text-xl font-bold mb-4">Request an Event</h2>
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">📋 My Event Requests</h2>
 
-      <label className="block mb-1 font-medium">Title *</label>
-      <input
-        type="text"
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 mb-4 rounded"
-      />
+      {events.length === 0 ? (
+        <p className="text-gray-600">No events found.</p>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {events.map((event) => (
+            <div
+              key={event._id}
+              className="bg-white border border-gray-200 rounded-xl shadow hover:shadow-md transition-all duration-300 p-5"
+            >
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-xl font-semibold text-blue-700">{event.title}</h3>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyles[event.status] || 'bg-gray-100 text-gray-800'}`}>
+                  {event.status}
+                </span>
+              </div>
 
-      <label className="block mb-1 font-medium">Description *</label>
-      <textarea
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 mb-4 rounded"
-      />
+              <div className="space-y-2 text-gray-700">
+                <p className="flex items-center gap-2">
+                  <FaCalendarAlt className="text-blue-500" /> 
+                  {new Date(event.date).toLocaleDateString()}
+                </p>
 
-      <label className="block mb-1 font-medium">Date *</label>
-      <input
-        type="date"
-        name="date"
-        value={formData.date}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 mb-4 rounded"
-      />
+                <p className="flex items-center gap-2">
+                  <FaMapMarkerAlt className="text-red-500" />
+                  {event.location}
+                </p>
 
-      <label className="block mb-1 font-medium">Location *</label>
-      <input
-        type="text"
-        name="location"
-        value={formData.location}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 mb-4 rounded"
-      />
+                <p className="flex items-center gap-2">
+                  <FaUsers className="text-indigo-500" />
+                  Max Guests: {event.maxGuests || 'Not specified'}
+                </p>
 
-      <label className="block mb-1 font-medium">Requirements</label>
-      <textarea
-        name="requirements"
-        value={formData.requirements}
-        onChange={handleChange}
-        className="w-full border p-2 mb-4 rounded"
-        placeholder="Optional"
-      />
+                <p className="flex items-center gap-2">
+                  <FaTags className="text-purple-500" />
+                  Type: {event.type || 'Not specified'}
+                </p>
 
-      <label className="block mb-1 font-medium">Max Guests</label>
-      <input
-        type="number"
-        name="maxGuests"
-        value={formData.maxGuests}
-        onChange={handleChange}
-        className="w-full border p-2 mb-4 rounded"
-        placeholder="Optional"
-      />
-
-      <label className="block mb-1 font-medium">Event Type *</label>
-      <select
-        name="type"
-        value={formData.type}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 mb-4 rounded"
-      >
-        <option value="MEETING">Meeting</option>
-        <option value="CONFERENCE">Conference</option>
-        <option value="WORKSHOP">Workshop</option>
-        <option value="WEBINAR">Webinar</option>
-        <option value="OTHER">Other</option>
-      </select>
-
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-      >
-        Submit Request
-      </button>
-    </form>
+                <p className="flex items-start gap-2">
+                  <FaInfoCircle className="text-gray-500 mt-1" />
+                  <span>Requirements: {event.requirements || '—'}</span>
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -8,6 +8,7 @@ import { getAllResources } from '../controller/resource.js';
 import {assignResources} from '../controller/planner.js'
 import { getApprovedEvents } from '../controller/planner.js';
 import { assignStaffToEvent } from '../controller/planner.js';
+import { getPlannerStats } from '../controller/planner.js';
 
 const router = express.Router();
 
@@ -64,5 +65,7 @@ router.get(
 
 
 router.put('/event/:eventId/assign-staff', authenticateToken, authorizeRoles('PLANNER'), assignStaffToEvent);
+
+router.get("/stats", authenticateToken, authorizeRoles('PLANNER'), getPlannerStats);
 
 export default router;

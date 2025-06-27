@@ -27,99 +27,105 @@ const Navbar = () => {
   if (loading) return null;
 
   return (
-    <nav className="bg-gray-900 text-white px-4 py-3 flex justify-between items-center shadow">
-      <div className="font-bold text-xl">Event Platform</div>
-      <ul className="flex gap-4">
-        {!role && (
-          <>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/signup">Signup</Link>
-            </li>
-          </>
-        )}
+    <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between">
+        <div className="text-2xl font-bold text-blue-600">Event Platform</div>
 
-        {role === "PLANNER" && (
-          <>
-            <li>
-              <Link to="/planner-dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link to="/planner-dashboard/add-event">Add Event</Link>
-            </li>
-            <li>
-              <Link to="/planner-dashboard/add-resource">Add Resource</Link>
-            </li>
-            {/* <li>
-              <Link to="/planner-dashboard/allocate-resource">
-                Allocate Resource
-              </Link>
-            </li> */}
-            <li>
-              <Link to="/planner-dashboard/pending-events">
-                Pending Events
-              </Link>
-            </li>
-             <Link to="/planner-dashboard/approved-events" className="hover:underline text-green-400 font-semibold">
-          approved-events
-        </Link>
-          </>
-        )}
+        <ul className="flex flex-wrap gap-4 items-center text-gray-700 font-medium">
+          {!role && (
+            <>
+              <li>
+                <Link to="/" className="hover:text-blue-500 transition">Home</Link>
+              </li>
+              <li>
+                <Link to="/login" className="hover:text-blue-500 transition">Login</Link>
+              </li>
+              <li>
+                <Link to="/signup" className="hover:text-blue-500 transition">Signup</Link>
+              </li>
+            </>
+          )}
 
-        {role === "STAFF" && (
-          <>
-            <li>
-              <Link to="/staff-dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link to="/staff-dashboard/edit-event">Edit Events</Link>
-            </li>
-          </>
-        )}
+          {role === "PLANNER" && (
+            <>
+              <li>
+                <Link to="/planner-dashboard" className="hover:text-blue-500 transition">Dashboard</Link>
+              </li>
+              <li>
+                <Link to="/planner-dashboard/add-event" className="hover:text-blue-500 transition">Add Event</Link>
+              </li>
+              <li>
+                <Link to="/planner-dashboard/add-resource" className="hover:text-blue-500 transition">Add Resource</Link>
+              </li>
+              <li>
+                <Link to="/planner-dashboard/pending-events" className="hover:text-blue-500 transition">Pending Events</Link>
+              </li>
+              <li>
+                <Link
+                  to="/planner-dashboard/approved-events"
+                  className="text-green-600 hover:text-green-700 font-semibold"
+                >
+                  Approved Events
+                </Link>
+              </li>
+            </>
+          )}
 
-        {role === "CLIENT" && (
-          <>
-            <li>
-              <Link to="/client-dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link to="/client-dashboard/request">Request Event</Link>
-            </li>
-            <Link
-              to="/client-dashboard/my-events"
-              className="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-              View My Events
-            </Link>
-          </>
-        )}
+          {role === "STAFF" && (
+            <>
+              <li>
+                <Link to="/staff-dashboard" className="hover:text-blue-500 transition">Dashboard</Link>
+              </li>
+              <li>
+                <Link to="/staff-dashboard/status" className="hover:text-blue-500 transition">Status</Link>
+              </li>
+              <li>
+                <Link to="/staff-dashboard/edit-event" className="hover:text-blue-500 transition">Edit Events</Link>
+              </li>
+            </>
+          )}
 
-        {role && (
-          <li>
-            <button
-              onClick={async () => {
-                try {
-                  await axios.get("http://localhost:5000/api/auth/logout", {
-                    withCredentials: true,
-                  });
-                  localStorage.clear();
-                  window.location.href = "/login";
-                } catch (err) {
-                  console.error("Logout failed:", err);
-                }
-              }}
-              className="text-red-400 hover:underline"
-            >
-              Logout
-            </button>
-          </li>
-        )}
-      </ul>
+          {role === "CLIENT" && (
+            <>
+              <li>
+                <Link to="/client-dashboard" className="hover:text-blue-500 transition">Dashboard</Link>
+              </li>
+              <li>
+                <Link to="/client-dashboard/request" className="hover:text-blue-500 transition">Request Event</Link>
+              </li>
+              <li>
+                <Link
+                  to="/client-dashboard/my-events"
+                  className="ml-2 bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-md transition"
+                >
+                  My Events
+                </Link>
+              </li>
+            </>
+          )}
+
+          {role && (
+            <li>
+              <button
+                onClick={async () => {
+                  try {
+                    await axios.get("http://localhost:5000/api/auth/logout", {
+                      withCredentials: true,
+                    });
+                    localStorage.clear();
+                    window.location.href = "/login";
+                  } catch (err) {
+                    console.error("Logout failed:", err);
+                  }
+                }}
+                className="text-red-500 hover:underline transition"
+              >
+                Logout
+              </button>
+            </li>
+          )}
+        </ul>
+      </div>
     </nav>
   );
 };

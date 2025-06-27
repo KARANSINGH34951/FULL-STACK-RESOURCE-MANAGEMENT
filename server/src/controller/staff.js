@@ -4,24 +4,16 @@ import User from '../model/User.js';
 
 export const getMyAllocatedEvents = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const staffId = req.user.id;
 
-    // Find the resource entry linked to the logged-in staff user
-    const staffResource = await Resource.findOne({ userId });
-
-    if (!staffResource) {
-      return res.status(404).json({ message: 'No resource found for this staff member' });
-    }
-
-    // Find events where this resource is allocated
-    const events = await Event.find({
-      resourcesAllocated: staffResource._id
-    }).populate('resourcesAllocated');
+    const events = await Event.find({ staffAssigned: staffId })
+      .populate('clientId', 'email')
+      .sort({ date: 1 });
 
     res.status(200).json(events);
   } catch (error) {
-    console.error('Error fetching staff events:', error);
-    res.status(500).json({ message: 'Failed to fetch allocated events' });
+    console.error("Error fetching allocated events:", error);
+    res.status(500).json({ message: "Failed to fetch events" });
   }
 };
 
@@ -48,24 +40,35 @@ export const getAllStaff = async (req, res) => {
 
 export const markEventCompleted = async (req, res) => {
   try {
-    const { eventId } = req.params;
+    const eventId = req.params.id;
     const userId = req.user.id;
 
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('resourcesAllocated');
 
     if (!event) return res.status(404).json({ message: 'Event not found' });
-    if (!event.assignedStaff || event.assignedStaff.toString() !== userId) {
-      return res.status(403).json({ message: 'You are not assigned to this event' });
+
+    // Verify the staff assigned matches
+    if (event.staffAssigned?.toString() !== userId) {
+      return res.status(403).json({ message: 'Unauthorized' });
     }
 
+    // 1. Update resource quantities
+    for (let resource of event.resourcesAllocated) {
+      const dbResource = await Resource.findById(resource._id);
+      dbResource.quantity += 1; // or use allocated quantity if tracked
+      await dbResource.save();
+    }
+
+    // 2. Update event status and deallocate staff
     event.status = 'Completed';
+    event.staffAssigned = null;
+    event.resourcesAllocated = []; // optional if you want to clear it
     await event.save();
 
-    res.status(200).json({ message: 'Event marked as completed ✅' });
+    res.status(200).json({ message: 'Event marked as completed and resources released' });
   } catch (err) {
-    console.error('Error ending event:', err);
-    res.status(500).json({ message: 'Failed to end event' });
+    console.error('Error marking event as completed:', err);
+    res.status(500).json({ message: 'Server error while completing event' });
   }
 };
-
 

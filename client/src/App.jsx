@@ -22,6 +22,7 @@ import EventRequestForm from "./pages/client/EventRequestForm";
 import MyEventRequests  from  "./pages/client/MyEventRequests"
 import PlannerPendingEvents from "./pages/planner/PlannerPendingEvents";
 import PlannerAssignResources from "./pages/planner/PlannerAssignResources";
+import Status from './pages/staff/Status';
 
 const App = () => {
   return (
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="/staff-dashboard" element={<StaffDashboard />}>
             <Route index element={<StaffHome />} />
             <Route path="edit-event" element={<EditEvent />} />
+             <Route path="status" element={<Status />} />
            
           </Route>
         </Route>

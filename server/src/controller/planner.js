@@ -305,3 +305,27 @@ export const assignStaffToEvent = async (req, res) => {
     res.status(500).json({ message: 'Failed to assign staff' });
   }
 };
+
+export const getPlannerStats = async (req, res) => {
+  try {
+    const totalEvents = await Event.countDocuments();
+    const upcomingEvents = await Event.countDocuments({ status: 'Approved', date: { $gte: new Date() } });
+
+    const allResources = await Resource.find();
+    const availableResources = allResources.reduce((sum, r) => sum + r.quantity, 0);
+    const allocatedResources = allResources.reduce((sum, r) => sum + r.allocatedQuantity, 0);
+
+    const staffAssigned = await Event.countDocuments({ staffAssigned: { $ne: null } });
+
+    res.status(200).json({
+      totalEvents,
+      upcomingEvents,
+      availableResources,
+      allocatedResources,
+      staffAssigned
+    });
+  } catch (err) {
+    console.error("Error fetching planner stats:", err);
+    res.status(500).json({ message: "Failed to fetch stats" });
+  }
+};
