@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
+import '../components/calendar.css'; // Import custom styles
 
 const EventCalendar = () => {
   const [value, setValue] = useState(new Date());
@@ -42,7 +43,6 @@ const EventCalendar = () => {
   return (
     <div className="bg-white rounded-xl shadow p-6 mt-6 space-y-8">
       <div className="grid lg:grid-cols-2 gap-8">
-        {/* Calendar */}
         <div>
           <h3 className="text-xl font-semibold mb-4">📅 Event Calendar</h3>
           <Calendar
@@ -53,7 +53,6 @@ const EventCalendar = () => {
           />
         </div>
 
-        {/* Events on selected date */}
         <div>
           <h3 className="text-xl font-semibold mb-4">
             Events on {value.toDateString()}
@@ -75,7 +74,6 @@ const EventCalendar = () => {
         </div>
       </div>
 
-      {/* All events */}
       <div>
         <h3 className="text-xl font-semibold mb-4">📋 All Upcoming Events</h3>
         {allEvents.length === 0 ? (
