@@ -28,6 +28,7 @@ const Signup = () => {
         formData,
         { withCredentials: true }
       );
+      navigate("/login");
       toast.success(res.data.message || "Signup successful!");
     } catch (err) {
       const message =

@@ -72,3 +72,62 @@ export const markEventCompleted = async (req, res) => {
   }
 };
 
+export const getEventById = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id)
+      .populate('clientId', 'email')
+      .populate('resourcesAllocated.resource', 'name');
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Optional: Restrict access only to assigned staff
+    if (event.staffAssigned?.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    res.status(200).json(event);
+  } catch (err) {
+    console.error('Error fetching event by ID:', err);
+    res.status(500).json({ message: 'Failed to fetch event' });
+  }
+};
+
+
+export const updateEventDetails = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    if (event.staffAssigned?.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to edit this event' });
+    }
+
+    const { title, location, date, requirements, resourcesAllocated } = req.body;
+
+    // Update event fields
+    event.title = title || event.title;
+    event.location = location || event.location;
+    event.date = date || event.date;
+    event.requirements = requirements || event.requirements;
+
+    // Update resources
+    if (Array.isArray(resourcesAllocated)) {
+      event.resourcesAllocated = resourcesAllocated.map(r => ({
+        resource: r.resource,
+        quantity: r.quantity,
+      }));
+    }
+
+    await event.save();
+
+    res.status(200).json({ message: 'Event updated successfully', event });
+  } catch (err) {
+    console.error('Error updating event:', err);
+    res.status(500).json({ message: 'Failed to update event' });
+  }
+};

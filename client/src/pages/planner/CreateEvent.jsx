@@ -1,96 +1,131 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
 
-const CreateEvent = () => {
+const EventRequestForm = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    dateTime: '',
-    location: '',
-    status: 'Pending',
-    isPublic: false,
-    maxGuests: '',
-    type: 'MEETING',
+    title: "",
+    date: "",
+    location: "",
+    type: "",
+    maxGuests: "",
+    requirements: "",
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await axios.post('http://localhost:5000/api/planner/create-event', formData, {
-        withCredentials: true,
-      });
-      alert('Event created successfully!');
-      setFormData({
-        title: '',
-        description: '',
-        dateTime: '',
-        location: '',
-        status: 'Pending',
-        isPublic: false,
-        maxGuests: '',
-        type: 'MEETING',
-      });
-    } catch (error) {
-      console.error('Error creating event:', error.response?.data || error.message);
-      alert('Failed to create event');
-    }
+    // Submit API here
+    alert("Event request submitted!");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 max-w-lg mx-auto shadow rounded bg-white">
-      <h2 className="text-xl font-semibold mb-4">Create Event</h2>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow space-y-6">
+      <h2 className="text-3xl font-bold text-center text-blue-800">🎉 Create an Event</h2>
+      <p className="text-center text-gray-500">
+        Fill in your event details below and let us handle the rest!
+      </p>
 
-      <label className="block mb-2">Title *</label>
-      <input name="title" value={formData.title} onChange={handleChange} required className="w-full p-2 border mb-4" />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic Info Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold text-gray-700">Event Title</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="mt-1 w-full border rounded p-2"
+              placeholder="e.g. John's Wedding"
+              required
+            />
+          </div>
 
-      <label className="block mb-2">Description *</label>
-      <textarea name="description" value={formData.description} onChange={handleChange} required className="w-full p-2 border mb-4" />
+          <div>
+            <label className="block font-semibold text-gray-700">Event Date</label>
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className="mt-1 w-full border rounded p-2"
+              required
+            />
+          </div>
 
-      <label className="block mb-2">Date & Time *</label>
-      <input type="datetime-local" name="dateTime" value={formData.dateTime} onChange={handleChange} required className="w-full p-2 border mb-4" />
+          <div>
+            <label className="block font-semibold text-gray-700">Location</label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              className="mt-1 w-full border rounded p-2"
+              placeholder="e.g. Hyatt Dubai"
+              required
+            />
+          </div>
 
-      <label className="block mb-2">Location *</label>
-      <input name="location" value={formData.location} onChange={handleChange} required className="w-full p-2 border mb-4" />
+          <div>
+            <label className="block font-semibold text-gray-700">Event Type</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="mt-1 w-full border rounded p-2"
+              required
+            >
+              <option value="">Select Type</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Corporate">Corporate</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
 
-      <label className="block mb-2">Status *</label>
-      <select name="status" value={formData.status} onChange={handleChange} required className="w-full p-2 border mb-4">
-        <option value="Pending">Pending</option>
-        <option value="Approved">Approved</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-        <option value="Cancelled">Cancelled</option>
-      </select>
+        {/* Guest and Requirements */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold text-gray-700">Maximum Guests</label>
+            <input
+              type="number"
+              name="maxGuests"
+              value={formData.maxGuests}
+              onChange={handleChange}
+              className="mt-1 w-full border rounded p-2"
+              placeholder="e.g. 200"
+              required
+            />
+          </div>
 
-      <label className="flex items-center mb-4">
-        <input type="checkbox" name="isPublic" checked={formData.isPublic} onChange={handleChange} className="mr-2" />
-        Is Public?
-      </label>
+          <div>
+            <label className="block font-semibold text-gray-700">Special Requirements</label>
+            <textarea
+              name="requirements"
+              value={formData.requirements}
+              onChange={handleChange}
+              className="mt-1 w-full border rounded p-2"
+              rows={3}
+              placeholder="e.g. Need DJ, vegan catering, LED screen, etc."
+            />
+          </div>
+        </div>
 
-      <label className="block mb-2">Max Guests</label>
-      <input type="number" name="maxGuests" value={formData.maxGuests} onChange={handleChange} className="w-full p-2 border mb-4" />
-
-      <label className="block mb-2">Tags / Type *</label>
-      <select name="type" value={formData.type} onChange={handleChange} required className="w-full p-2 border mb-4">
-        <option value="MEETING">Meeting</option>
-        <option value="CONFERENCE">Conference</option>
-        <option value="WORKSHOP">Workshop</option>
-        <option value="WEBINAR">Webinar</option>
-        <option value="OTHER">Other</option>
-      </select>
-
-      <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-        Create Event
-      </button>
-    </form>
+        {/* Submit Button */}
+        <div className="text-center">
+          <button
+            type="submit"
+            className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
+          >
+            🚀 Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
-export default CreateEvent;
+export default EventRequestForm;

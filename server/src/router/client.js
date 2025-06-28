@@ -10,11 +10,6 @@ resourceRouter.post(
   createEvent
 );
 
-resourceRouter.get(
-  "/my-events",
-  authenticateToken,
-  authorizeRoles("CLIENT"),
-  getMyEvents
-);
+
 
 export default resourceRouter;

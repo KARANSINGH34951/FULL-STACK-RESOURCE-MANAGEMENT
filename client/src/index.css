@@ -6,3 +6,9 @@
   font-weight: bold;
   color: black;
 }
+a
+
+/* Optional global font */
+body {
+  font-family: 'Inter', sans-serif;
+}

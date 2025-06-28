@@ -24,17 +24,17 @@ const useCases = [
   {
   title: 'Product Launch Events',
   description: 'Manage logistics and promotion for impactful product release events.',
-  image: 'https://images.unsplash.com/photo-1581090700227-1f91d7b2c3d6?auto=format&fit=crop&w=800&q=80', // Tech launch stage
+  image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGV2ZW50fGVufDB8fDB8fHww', // Tech launch stage
 },
 {
   title: 'College Fests',
   description: 'Streamline the organization of large college cultural or technical events.',
-  image: 'https://images.unsplash.com/photo-1579015457136-df8e3c4a9a2e?auto=format&fit=crop&w=800&q=80', // Youth concert
+  image: 'https://images.unsplash.com/photo-1522158637959-30385a09e0da?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZXZlbnR8ZW58MHx8MHx8fDA%3D', // Youth concert
 },
 {
   title: 'Charity Galas',
   description: 'Coordinate with volunteers, donors, and vendors to host meaningful fundraising events.',
-  image: 'https://images.unsplash.com/photo-1601933470928-c6dbb729c9cc?auto=format&fit=crop&w=800&q=80', 
+  image: 'https://plus.unsplash.com/premium_photo-1683140538884-07fb31428ca6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y2hhcml0eXxlbnwwfHwwfHx8MA%3D%3D', 
 }
 
 ];

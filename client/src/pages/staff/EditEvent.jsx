@@ -2,7 +2,7 @@ import React from 'react'
 
 const EditEvent = () => {
   return (
-    <div>EditEvent</div>
+    <div>Under constructiont field </div>
   )
 }
 

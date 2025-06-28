@@ -8,7 +8,7 @@ const eventSchema = new mongoose.Schema({
   clientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: false, // clientId optional for planner-created events
+    required: false, // optional for planner-created events
   },
   status: {
     type: String,
@@ -17,9 +17,22 @@ const eventSchema = new mongoose.Schema({
   },
   requirements: { type: String },
   createdAt: { type: Date, default: Date.now },
+
   resourcesAllocated: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Resource" },
+    {
+      resource: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Resource",
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+      },
+    },
   ],
+
   staffAssigned: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   isPublic: { type: Boolean, default: false },
   maxGuests: { type: Number },

@@ -4,7 +4,8 @@ import RoleHighlights from '../components/RoleHighlights';
 import FeatureSection from '../components/FeatureSection';
 import UseCaseSlider from '../components/UseCaseSlider';
 import Footer from '../components/Footer';
-import { User } from 'lucide-react';
+import Lottie from 'lottie-react';
+import eventAnimation from '../assets/event-3d.json';
 import HowItWorks from '../components/HowItWorks.jsx';
 
 const Home = () => {
@@ -12,58 +13,57 @@ const Home = () => {
 
   return (
     <div className="bg-white">
-      {/* Hero Section with Background */}
-      <div className="relative h-screen ">
-        {/* Background Overlay */}
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-45"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1950&q=80')`,
-          }}
-        ></div>
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-sky-100 via-white to-purple-100 min-h-screen flex items-center justify-center">
+        {/* Animated Blobs */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-300 opacity-30 rounded-full mix-blend-multiply filter blur-2xl animate-blob"></div>
+        <div className="absolute top-20 right-10 w-80 h-80 bg-pink-300 opacity-30 rounded-full mix-blend-multiply filter blur-2xl animate-blob animation-delay-2000"></div>
 
-        {/* Navbar */}
-        {/* <nav className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-black bg-opacity-60">
-          <div className="text-2xl font-bold text-[#8980F5]">EventX</div>
-          <div className="space-x-4">
-            <button
-              onClick={() => navigate('/login')}
-              className="px-4 py-2 bg-[#8980F5] hover:bg-[#7a6bcf] text-white rounded"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => navigate('/signup')}
-              className="px-4 py-2 border border-[#7a6bcf] text-[#8980F5] hover:bg-[#7a6bcf] hover:text-white rounded"
-            >
-              Signup
-            </button>
+        {/* Content Grid */}
+        <div className="z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 px-8 md:px-16 py-24 items-center max-w-7xl mx-auto">
+          {/* Left Content */}
+          <div className="backdrop-blur-md bg-white/70 border border-white/30 rounded-3xl shadow-xl p-10 text-center lg:text-left">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight mb-6">
+              Plan. Organize. <span className="text-sky-600">Celebrate.</span>
+            </h1>
+            <p className="text-lg text-gray-600 mb-8">
+              Your all-in-one solution for seamless event management and resource allocation.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <button
+                onClick={() => navigate('/signup')}
+                className="px-6 py-3 bg-gradient-to-r from-sky-600 to-purple-600 text-white text-lg rounded-xl shadow-md hover:scale-105 transition"
+              >
+                Get Started
+              </button>
+              <button
+                onClick={() => navigate('/login')}
+                className="px-6 py-3 border border-sky-600 text-sky-600 text-lg rounded-xl hover:bg-sky-50 transition"
+              >
+                Login
+              </button>
+            </div>
           </div>
-        </nav> */}
 
-        {/* Hero Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center h-full px-4">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-4">
-            Plan. Organize. Celebrate.
-          </h1>
-          <p className="text-lg md:text-xl max-w-2xl mb-6">
-            Your all-in-one solution for seamless event management and resource allocation.
-          </p>
-          <button
-            onClick={() => navigate('/signup')}
-            className="px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded text-lg font-medium"
-          >
-            Get Started
-          </button>
+          {/* Right Animation */}
+          <div className="flex justify-center">
+            <Lottie
+              animationData={eventAnimation}
+              loop
+              autoplay
+              className="w-full max-w-md"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Role-Based Highlights Section */}
-      <RoleHighlights />
-      <FeatureSection/>
+      {/* Sections */}
       <UseCaseSlider />
+     
+      <FeatureSection />
+       <RoleHighlights />
       <HowItWorks />
-      <Footer/>
+      <Footer />
     </div>
   );
 };

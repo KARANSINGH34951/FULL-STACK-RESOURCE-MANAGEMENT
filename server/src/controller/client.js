@@ -31,7 +31,10 @@ export const createEvent = async (req, res) => {
 
 export const getMyEvents = async (req, res) => {
   try {
-    const events = await Event.find({ clientId: req.user.id }).sort({ createdAt: -1 });
+    const events = await Event.find({ clientId: req.user.id })
+      .populate('staffAssigned', 'name email') // <-- populate staff details
+      .sort({ createdAt: -1 });
+
     res.status(200).json(events);
   } catch (error) {
     console.error('Error fetching client events:', error);
@@ -47,5 +50,8 @@ export const getPendingEvents = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch pending events' });
   }
 };
+
+
+
 
 

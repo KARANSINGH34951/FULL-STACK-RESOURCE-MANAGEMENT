@@ -23,6 +23,7 @@ import MyEventRequests  from  "./pages/client/MyEventRequests"
 import PlannerPendingEvents from "./pages/planner/PlannerPendingEvents";
 import PlannerAssignResources from "./pages/planner/PlannerAssignResources";
 import Status from './pages/staff/Status';
+import './index.css';
 
 const App = () => {
   return (

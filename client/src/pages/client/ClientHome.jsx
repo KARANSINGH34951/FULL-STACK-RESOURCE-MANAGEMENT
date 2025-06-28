@@ -35,7 +35,6 @@ const ClientHome = () => {
     } else if (isToday) {
       return 'border border-gray-400 rounded-full';
     }
-
     return null;
   };
 
@@ -95,6 +94,23 @@ const ClientHome = () => {
               <p className="text-sm text-gray-600">
                 🏷️ Status: <span className="font-semibold">{event.status}</span>
               </p>
+
+              {/* Assigned Staff */}
+              {event.staffAssigned ? (
+                <div className="mt-2 text-sm text-green-600">
+                  👷 Staff Assigned:{' '}
+                  <span className="font-semibold">{event.staffAssigned.name}</span> (
+                  <a
+                    href={`mailto:${event.staffAssigned.email}`}
+                    className="text-blue-700 underline"
+                  >
+                    {event.staffAssigned.email}
+                  </a>
+                  )
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-red-500">⚠️ No staff assigned yet</p>
+              )}
             </div>
           ))}
 
